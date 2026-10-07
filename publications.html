@@ -1,0 +1,23 @@
+---
+layout: default
+title : Publications
+navbar_title: Publications
+---
+
+{% assign pubs = site.publications | sort: "date" | reverse %}
+{% assign years = pubs | group_by_exp: "pub", "pub.date | date: '%Y'" %}
+
+<header class="page-header">
+    <h1 class="page-title">Publications</h1>
+</header>
+
+{% for year in years %}
+<section class="pub-year">
+    <h2 class="pub-year-label">{{ year.name }}</h2>
+    <div class="pub-list">
+        {% for item in year.items %}
+            {% include widgets/publication_item.html item=item %}
+        {% endfor %}
+    </div>
+</section>
+{% endfor %}

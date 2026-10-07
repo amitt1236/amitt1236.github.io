@@ -1,0 +1,46 @@
+{% assign profile = site.data.profile %}
+{% assign entry_sections = "education,experience" | split: "," %}
+{% for key in entry_sections %}
+{% assign entries = profile[key] %}
+{% if entries %}
+<section class="section">
+    <div class="section-head">
+        <h2 class="section-title">{{ key | capitalize }}</h2>
+    </div>
+    <ul class="entries">
+        {% for item in entries %}
+        <li class="entry">
+            <span class="entry-logo">
+                {%- if item.logo -%}
+                <img src="{{ item.logo | relative_url }}" alt="">
+                {%- else -%}
+                <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+                {%- endif -%}
+            </span>
+            <div class="entry-body">
+                <div class="entry-name">{{ item.name }}</div>
+                <div class="entry-detail">{{ item.position }}{% if item.dept %} · {{ item.dept }}{% endif %}</div>
+            </div>
+            <div class="entry-date">{{ item.date | replace: " - ", " – " }}</div>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
+{% endfor %}
+
+{% if profile.awards %}
+<section class="section">
+    <div class="section-head">
+        <h2 class="section-title">Honors &amp; Awards</h2>
+    </div>
+    <ul class="awards">
+        {% for item in profile.awards %}
+        <li>
+            <span>{{ item.name }}</span>
+            <span class="entry-date">{{ item.date | replace: " - ", " – " }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endif %}
