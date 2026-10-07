@@ -1,0 +1,8 @@
+{% assign footer_text = site.data.display.footer_text | strip %}
+<footer class="site-footer">
+    <div class="container footer-inner">
+        <span>&copy; {{ "now" | date: "%Y" }} {{ site.data.profile.primary_name }}</span>
+        {% if footer_text != "" %}<span>{{ footer_text }}</span>{% endif %}
+        <span>Last updated {{ "now" | date: "%b %Y" }}</span>
+    </div>
+</footer>

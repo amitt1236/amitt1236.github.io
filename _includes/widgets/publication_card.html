@@ -1,0 +1,12 @@
+{% assign publications = include.publications %}
+<section class="section">
+    <div class="section-head">
+        <h2 class="section-title">{% if include.title %}{{ include.title }}{% else %}Selected Publications{% endif %}</h2>
+        <a class="section-link" href="{{ '/publications' | relative_url }}">All publications <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="pub-list">
+        {% for item in publications limit:include.limit %}
+            {% include widgets/publication_item.html item=item %}
+        {% endfor %}
+    </div>
+</section>

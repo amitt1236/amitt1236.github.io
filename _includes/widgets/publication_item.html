@@ -1,0 +1,71 @@
+{%- assign item = include.item -%}
+
+{%- comment -%} "Conference on X (ABBR)" -> tag "ABBR", long name "Conference on X". Set `venue:` in front matter to override the tag. {%- endcomment -%}
+{%- if item.pub contains "(" -%}
+    {%- assign venue_short = item.pub | split: "(" | last | split: ")" | first -%}
+    {%- assign venue_long = item.pub | split: " (" | first -%}
+{%- else -%}
+    {%- assign venue_short = item.pub -%}
+    {%- assign venue_long = "" -%}
+{%- endif -%}
+{%- if item.venue -%}{%- assign venue_short = item.venue -%}{%- endif -%}
+{%- assign is_preprint = false -%}
+{%- if item.pub contains "arXiv" or item.pub contains "reprint" -%}{%- assign is_preprint = true -%}{%- endif -%}
+
+{%- comment -%} The title links to the first available link. {%- endcomment -%}
+{%- assign title_url = nil -%}
+{%- for link in item.links -%}
+    {%- if link[1] != "coming soon" -%}
+        {%- if link[1].url -%}{%- assign title_url = link[1].url -%}{%- else -%}{%- assign title_url = link[1] -%}{%- endif -%}
+        {%- break -%}
+    {%- endif -%}
+{%- endfor -%}
+
+<article class="pub">
+    <h3 class="pub-title">
+        {%- if title_url -%}
+        <a href="{{ title_url }}" target="_blank" rel="noopener">{{ item.title }}</a>
+        {%- else -%}
+        {{ item.title }}
+        {%- endif -%}
+    </h3>
+    <p class="pub-authors">{% include widgets/author_list.html authors=item.authors %}</p>
+    <p class="pub-venue">
+        <span class="venue-tag{% if is_preprint %} is-muted{% endif %}" title="{{ item.pub | escape }}">{{ venue_short }} {{ item.pub_date }}</span>
+        {% if venue_long != "" or item.pub_pre or item.pub_post or item.pub_last %}<span>{{ item.pub_pre }}{{ venue_long }}{{ item.pub_post }} {{ item.pub_last }}</span>{% endif %}
+    </p>
+    {% if item.abstract %}<p class="pub-abstract">{{ item.abstract }}</p>{% endif %}
+
+    {% if item.links or item.semantic_scholar_id %}
+    <div class="pub-links">
+        {%- for link in item.links -%}
+            {%- assign label = link[0] -%}
+            {%- if link[1].url -%}
+                {%- assign url = link[1].url -%}{%- assign target = link[1].target -%}
+            {%- else -%}
+                {%- assign url = link[1] -%}{%- assign target = "_blank" -%}
+            {%- endif -%}
+            {%- assign key = label | downcase -%}
+            {%- case key -%}
+                {%- when "paper", "pdf" -%}{%- assign icon = "fa-regular fa-file-lines" -%}
+                {%- when "arxiv" -%}{%- assign icon = "ai ai-arxiv" -%}
+                {%- when "code" -%}
+                    {%- if url contains "github.com" -%}{%- assign icon = "fa-brands fa-github" -%}{%- else -%}{%- assign icon = "fa-solid fa-code" -%}{%- endif -%}
+                {%- when "project page", "project", "website", "webpage" -%}{%- assign icon = "fa-solid fa-globe" -%}
+                {%- when "video", "talk" -%}{%- assign icon = "fa-solid fa-circle-play" -%}
+                {%- when "slides" -%}{%- assign icon = "fa-solid fa-person-chalkboard" -%}
+                {%- when "poster" -%}{%- assign icon = "fa-regular fa-image" -%}
+                {%- when "bibtex", "cite", "citation" -%}{%- assign icon = "fa-solid fa-quote-right" -%}
+                {%- when "data", "dataset" -%}{%- assign icon = "fa-solid fa-database" -%}
+                {%- else -%}{%- assign icon = "fa-solid fa-link" -%}
+            {%- endcase -%}
+            {%- if url == "coming soon" %}
+            <span class="pub-link is-soon" title="Coming soon"><i class="{{ icon }}" aria-hidden="true"></i>{{ label }}<span class="soon-tag">soon</span></span>
+            {%- else %}
+            <a class="pub-link" href="{{ url }}" target="{{ target }}" rel="noopener"><i class="{{ icon }}" aria-hidden="true"></i>{{ label }}</a>
+            {%- endif -%}
+        {%- endfor %}
+        {% if item.semantic_scholar_id %}<span data-semantic-scholar-id="{{ item.semantic_scholar_id }}"></span>{% endif %}
+    </div>
+    {% endif %}
+</article>
